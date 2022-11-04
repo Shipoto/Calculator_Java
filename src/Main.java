@@ -1,21 +1,17 @@
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.annotation.IncompleteAnnotationException;
-import java.sql.SQLOutput;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-//        Scanner in = new Scanner(System.in);
-//        System.out.print("Ввведите выражение для вычисления: ");
-//        String input = in.nextLine();
-//        calc(input);
-        calc("II + I");
-    };
+        Scanner in = new Scanner(System.in);
+        System.out.print("Ввведите выражение для вычисления: ");
+        String input = in.nextLine();
+        calc(input);
+        // автоматический ввод
+//        calc("21 + 2");
+    }
     public static String calc(String input) throws IOException {
-        String in = input;
         String result = "";
         String plus = "+";
         String minus = "-";
@@ -23,14 +19,15 @@ public class Main {
         String multiply = "*";
 
         // Создаем массив из символов
-        String[] inArray = in.split(" ");
-        System.out.println("Приведение к массиву: " + Arrays.toString(inArray));
+
+        String[] inArray = input.split(" ");
+        if (inArray.length != 3) {
+            throw new IOException();}
         String first = inArray[0];
         String second = inArray[2];
         String operand = inArray[1];
 
         // Создаем hashmap для римских цифр
-
         HashMap<String, String> roman = new HashMap<>();
         roman.put("I", "1");
         roman.put("II", "2");
@@ -43,68 +40,87 @@ public class Main {
         roman.put("IX", "9");
         roman.put("X", "10");
 
-
-        // длина массива
-        System.out.println("Длина массива: " + inArray.length);
-//        System.out.println("Проверка: " + roman.containsKey(first));
-        System.out.println("Проверка: " + roman.containsValue(first));
-
-
-
-
-//        try {(roman.containsValue(Integer.valueOf(first)) && roman.containsValue(Integer.valueOf(second)));
-
         // Проверяем корректность введеных данных
-        if (inArray.length != 3) {
-            throw new IOException();
-        } else if (roman.containsValue(first)) {
-            if (!roman.containsValue(Integer.valueOf(first)) && !roman.containsValue(Integer.valueOf(second))) {
-                throw new IOException(); }
-        } else if (roman.containsKey(first)) {
-            if (!roman.containsKey(first) && !roman.containsKey(second)) {
+        if (roman.containsValue(first)) {
+            if (!(roman.containsValue(first) && roman.containsValue(second))) {
                 throw new IOException();
-                }
+            }
+        } else if (roman.containsKey(first)) {
+            if (!(roman.containsKey(first) && roman.containsKey(second))) {
+                throw new IOException();
+            }
         }
 
-
-        // Проверяем соответствие введенной строки
-//        if ( first.matches("[0-9]") && operand.matches("[+-/*]") && second.matches("[0-9]") ) {
+        // Проверяем соответствие введенной строки арабским или римским цифрам через hashmap roman
         if (roman.containsValue(first)) {
 
             // производим вычисление арабских чисел
-
             if (operand.equals(plus)) {
-                result = String.valueOf(Integer.valueOf(first) + Integer.valueOf(second));
+                result = String.valueOf(Integer.parseInt(first) + Integer.parseInt(second));
                 System.out.println("Результат сложения: " + result);
             } else if (operand.equals(minus)) {
-                result = String.valueOf(Integer.valueOf(first) - Integer.valueOf(second));
+                result = String.valueOf(Integer.parseInt(first) - Integer.parseInt(second));
                 System.out.println("Результат вычитания: " + result);
             } else if (operand.equals(divide)) {
-                result = String.valueOf(Integer.valueOf(first) / Integer.valueOf(second));
+                result = String.valueOf(Integer.parseInt(first) / Integer.parseInt(second));
                 System.out.println("Результат деления: " + result);
             } else if (operand.equals(multiply)) {
-                result = String.valueOf(Integer.valueOf(first) * Integer.valueOf(second));
+                result = String.valueOf(Integer.parseInt(first) * Integer.parseInt(second));
                 System.out.println("Результат умножения: " + result);
             }
 
-//        } else if (first.matches("[IVX]") && operand.matches("[+-/*]") && second.matches("[IVX]")) {
+//
         } else if (roman.containsKey(first)) {
-            System.out.println("rim");
-                // производим вычисление арабских чисел
+
+            // производим вычисление римских чисел
             if (operand.equals(plus)) {
-                result = String.valueOf(Integer.parseInt(roman.get(first)) + Integer.parseInt(roman.get(second)));
-                System.out.println("Результат сложения римских чисел: " + result);
+                String preresult = String.valueOf(Integer.parseInt(roman.get(first)) + Integer.parseInt(roman.get(second)));
+                for (String key : roman.keySet()) {
+                    if (roman.get(key).equals(preresult)) {
+                        result = key;
+                        System.out.println("Результат операции римских чисел: " + result);
+                    }
+                }
+
+            } else if (operand.equals(minus)) {
+                String preresult = String.valueOf(Integer.parseInt(roman.get(first)) - Integer.parseInt(roman.get(second)));
+                if (Integer.parseInt(preresult) <= 0) {
+                    throw new IOException();
+                }
+                for (String key : roman.keySet()) {
+                    if (roman.get(key).equals(preresult)) {
+                        result = key;
+                        System.out.println("Результат операции римских чисел: " + result);
+                    }
+                }
+
+            } else if (operand.equals(divide)) {
+                String preresult = String.valueOf(Integer.parseInt(roman.get(first)) / Integer.parseInt(roman.get(second)));
+                for (String key : roman.keySet()) {
+                    if (roman.get(key).equals(preresult)) {
+                        result = key;
+                        System.out.println("Результат операции римских чисел: " + result);
+                    }
+                }
+
+            } else if (operand.equals(multiply)) {
+                String preresult = String.valueOf(Integer.parseInt(roman.get(first)) * Integer.parseInt(roman.get(second)));
+                for (String key : roman.keySet()) {
+                    if (roman.get(key).equals(preresult)) {
+                        result = key;
+                        System.out.println("Результат операции римских чисел: " + result);
+                    }
+                }
+
             }
-
         } else {
-            System.out.println("error");
+            throw new IOException();
         }
-
 //        Rimlin rimlin = Rimlin.I;
 //        System.out.println(rimlin.getTranslation());
 
-//        result = String.valueOf(result);
-        return result;
-    }
+            return result;
+        }
+
 }
 
